@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - Eventify Organizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="events" data-protected="yes">
+    <div id="navArea"></div>
+    <div class="main">
+        <div class="page-title-row only-mobile">
+            <a class="back" href="events.html" data-back aria-label="Back"></a>
+            <h1 class="title">Event Details</h1>
+        </div>
+        <div class="page-head only-desktop">
+            <div><h1 id="dName"></h1><p id="dStatus"></p></div>
+            <div class="head-actions">
+                <a class="btn btn-outline" id="editLinkD" href="create-event.html">Edit Details</a>
+                <a class="btn" href="create-event.html">Create Event</a>
+            </div>
+        </div>
+
+        <input type="file" id="bannerFile" accept="image/*" class="hidden">
+        <div class="detail-wrap">
+            <div>
+                <div class="banner">
+                    <img id="bannerImg" src="" alt="">
+                    <button class="upload-over" id="bannerBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 9"/></svg> Upload image</button>
+                </div>
+                <h2 class="detail-name only-mobile" id="mName"></h2>
+                <p class="detail-line"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="dDate"></span></p>
+                <p class="detail-line"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="dLocation"></span></p>
+
+                <div class="tab-row only-mobile" id="detailTabs">
+                    <button class="active" data-panel="overviewPanel">Overview</button>
+                    <button data-panel="staffPanel">Staff</button>
+                </div>
+
+                <div class="tab-panel show" id="overviewPanel">
+                    <h3 class="about-title" style="margin-top:22px">About Event</h3>
+                    <p class="about-text" id="dAbout"></p>
+                </div>
+                <div class="tab-panel" id="staffPanel">
+                    <h3 class="about-title" style="margin:22px 0 12px">Event Staff</h3>
+                    <div id="dStaff"></div>
+                </div>
+
+                <div class="action-stack only-mobile">
+                    <a class="btn" href="create-event.html">Create Event</a>
+                    <a class="btn btn-soft" id="editLinkM" href="create-event.html">Edit Details</a>
+                </div>
+            </div>
+
+            <div class="only-desktop">
+                <div class="panel">
+                    <h2>Quick Stats</h2>
+                    <div class="desk-stats">
+                        <div><b id="sTotal">0</b><small>Total Tickets</small></div>
+                        <div><b id="sChecked">0</b><small>Checked In</small></div>
+                        <div><b id="sRemaining">0</b><small>Remaining</small></div>
+                    </div>
+                    <p class="sub" style="margin:0 0 16px">Category: <b id="sCategory"></b> &nbsp;|&nbsp; Capacity: <b id="sCapacity"></b></p>
+                    <a class="btn" href="attendance.html">View Attendees</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="backend.js"></script>
+    <script src="common.js"></script>
+    <script src="event-details.js"></script>
+</body>
+</html>

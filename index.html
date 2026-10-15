@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventify</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="organizer/style.css">
+</head>
+<body class="onb-body" data-page="onboarding">
+    <div class="onb">
+        <section class="screen active" id="slide1">
+            <div class="arch"><img src="assets/onboard-1.png" alt=""></div>
+            <div class="slide-text">
+                <h1>Smarter Events.<br>Easier Check-ins.<br>Better Experiences.</h1>
+                <p>We make event check-in simple, secure, and stress-free. From generating unique QR tickets to verifying attendees and tracking attendance in real time, our platform helps organizers stay in control while giving attendees a smooth entry experience. Less waiting. Less hassle. More time to enjoy the event.</p>
+            </div>
+            <div class="slide-actions">
+                <button class="btn start-btn" data-action="next">Get Started</button>
+            </div>
+        </section>
+
+        <section class="screen" id="slide2">
+            <div class="arch"><img src="assets/onboard-2.jpg" alt=""></div>
+            <div class="slide-text">
+                <h1>Verify Every Ticket in Seconds</h1>
+                <p>Generate unique QR tickets and verify attendees quickly with a simple scan. Detect invalid, duplicate, and wrong-event tickets before they get through the door.</p>
+            </div>
+            <div class="slide-actions">
+                <div class="row"><button class="btn btn-soft" data-action="back">Back</button><button class="btn" data-action="next">Continue</button></div>
+                <button class="btn btn-outline" data-action="skip">Skip</button>
+            </div>
+        </section>
+
+        <section class="screen" id="slide3">
+            <div class="arch"><img src="assets/onboard-3.png" alt=""></div>
+            <div class="slide-text">
+                <h1>Know Who’s Checked In, Live</h1>
+                <p>Monitor attendance as it happens. Keep track of check-ins, manage your event staff, and access accurate attendance records from one place.</p>
+            </div>
+            <div class="slide-actions">
+                <div class="row"><button class="btn btn-soft" data-action="back">Back</button><button class="btn" data-action="next">Continue</button></div>
+                <button class="btn btn-outline" data-action="skip">Skip</button>
+            </div>
+        </section>
+
+        <section class="screen" id="slide4">
+            <div class="slide-left">
+                <h1>Keep Check-in<br>Moving</h1>
+                <p>Give your staff a simple scanning experience designed for fast entry, even when connectivity is unreliable.</p>
+            </div>
+            <div class="illustration"><img src="assets/onboard-4.png" alt=""></div>
+            <div class="slide-actions">
+                <div class="row"><button class="btn btn-soft" data-action="back">Back</button><button class="btn" data-action="next">Continue</button></div>
+                <button class="btn btn-outline" data-action="skip">Skip</button>
+            </div>
+        </section>
+
+        <section class="screen" id="roleScreen">
+            <div style="padding-top:24px"><button class="back" id="roleBack" aria-label="Back" data-back></button></div>
+            <h1 class="title" style="margin-top:26px">How are you using the platform?</h1>
+            <p class="sub">Choose an option below to continue</p>
+            <div class="role-list">
+                <button class="role-card" data-role="organizer">
+                    <span class="role-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></span>
+                    <span><h3>Organizing an event</h3><p>Create and manage my event.</p></span>
+                    <span class="radio"></span>
+                </button>
+                <button class="role-card" data-role="staff">
+                    <span class="role-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v1M14 21h1M18 18h3v3"/></svg></span>
+                    <span><h3>I’m an Event staff</h3><p>Scan tickets and manage entry</p></span>
+                    <span class="radio"></span>
+                </button>
+            </div>
+            <div class="slide-actions"><button class="btn" id="roleContinue" disabled>Continue</button></div>
+        </section>
+    </div>
+
+    <script src="organizer/backend.js"></script>
+    <script src="organizer/common.js"></script>
+    <script src="organizer/onboarding.js"></script>
+</body>
+</html>

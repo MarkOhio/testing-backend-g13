@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets & Codes - Eventify Organizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="tickets" data-protected="yes">
+    <div id="navArea"></div>
+    <div class="main">
+        <input type="file" id="codesFile" accept=".csv,.txt,.xls,.xlsx" class="hidden">
+        <div class="page-title-row only-mobile">
+            <a class="back" href="create-event.html" data-back aria-label="Back"></a>
+            <h1 class="title" style="font-size:18px">Upload/Manage Ticket Codes</h1>
+        </div>
+        <div class="page-head only-desktop">
+            <div><h1>Tickets &amp; Codes</h1><p>Manage ticket categories and ticket codes.</p></div>
+            <div class="head-actions">
+                <button class="btn" id="addCategory" type="button">+ Add Ticket Category</button>
+                <button class="btn btn-outline" id="viewCodes" type="button">View Codes</button>
+                <button class="btn btn-outline" id="shareLink" type="button">Share Link</button>
+            </div>
+        </div>
+
+        <div class="only-desktop" style="margin-bottom:36px">
+            <div class="desk-tabs" id="ticketTabs">
+                <button class="active" data-t="ticketsTable">Tickets</button>
+                <button data-t="promoTable">Promo Codes</button>
+            </div>
+            <div class="table-box" id="ticketsTable">
+                <table class="data">
+                    <thead><tr><th>Ticket Type</th><th>Price</th><th>Total Sold</th><th>Available</th><th>Status</th><th>Gate</th></tr></thead>
+                    <tbody id="ticketsBody"></tbody>
+                </table>
+            </div>
+            <div class="table-box hidden" id="promoTable">
+                <table class="data">
+                    <thead><tr><th>Promo Code</th><th>Discount</th><th>Times Used</th><th>Status</th></tr></thead>
+                    <tbody id="promoBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="upload-grid">
+            <div>
+                <div class="upload-zone">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m12 16V9m0 0-3 3m3-3 3 3"/></svg>
+                    <p>Upload Ticket Code here</p>
+                    <small>Supported CSV, TXT or XLS</small>
+                </div>
+                <button class="btn btn-outline" id="chooseFile" type="button">Choose file</button>
+                <p class="file-msg" id="fileMsg"></p>
+            </div>
+            <div id="uploadedBlock">
+                <h2 class="section-title" id="uploadedTitle" style="margin-top:26px">Uploaded Ticket</h2>
+                <div id="codesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="backend.js"></script>
+    <script src="common.js"></script>
+    <script src="ticket-codes.js"></script>
+</body>
+</html>

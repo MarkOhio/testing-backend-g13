@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Eventify Organizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="settings" data-protected="yes">
+    <div id="navArea"></div>
+    <div class="main">
+        <div class="page-title-row only-mobile">
+            <a class="back" href="dashboard.html" data-back aria-label="Back"></a>
+            <h1 class="title" style="font-size:20px">Settings</h1>
+        </div>
+        <div class="page-head only-desktop"><div><h1>Settings</h1><p>Manage your account and event preferences.</p></div></div>
+        <div class="settings-wrap">
+            <h2 class="group-title" style="margin-top:0">Event Settings</h2>
+            <button class="setting-card" type="button" data-msg="Event settings are not connected yet."><h3>Event Information</h3><p>Manage event details images types and more.</p></button>
+            <button class="setting-card" type="button" data-msg="Notification settings are not connected yet."><h3>Notification</h3><p>Manage email &amp; SMS notification</p></button>
+            <h2 class="group-title">Support</h2>
+            <button class="setting-card" type="button" data-msg="Support will contact you once the backend is connected."><h3>Contact Support</h3><p>We’re here to help.</p></button>
+            <button class="setting-card" type="button" data-msg="Help center is not connected yet."><h3>Help Center</h3><p>Find quick answers.</p></button>
+            <div style="margin-top:26px;max-width:220px"><button class="btn btn-outline" id="logoutBtn" type="button">Log out</button></div>
+        </div>
+    </div>
+
+    <script src="backend.js"></script>
+    <script src="common.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>

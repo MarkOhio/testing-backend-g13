@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify passcode - Eventify</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="verify">
+    <div class="auth">
+        <div class="auth-side only-desktop">
+            <div class="brand"><div class="logo-mark"></div><span class="brand-name">Eventify</span></div>
+            <div>
+                <h2>Smarter Events.<br>Easier Check-ins.</h2>
+                <p>Verify. Check in. Track attendance.<br>Create, manage and track your events all in one place.</p>
+            </div>
+        </div>
+        <div class="auth-main">
+            <div class="auth-box">
+                <div class="auth-top"><button class="back" aria-label="Back" data-back id="verifyBack"></button></div>
+                <h1 class="title">Verify passcode</h1>
+                <p class="sub">Enter the verification code that has been sent to your email address to verify your account</p>
+                <div class="otp-row" id="otpRow">
+                    <input type="text" maxlength="1" inputmode="numeric" placeholder="•">
+                    <input type="text" maxlength="1" inputmode="numeric" placeholder="•">
+                    <input type="text" maxlength="1" inputmode="numeric" placeholder="•">
+                    <span class="dash"></span>
+                    <input type="text" maxlength="1" inputmode="numeric" placeholder="•">
+                    <input type="text" maxlength="1" inputmode="numeric" placeholder="•">
+                    <input type="text" maxlength="1" inputmode="numeric" placeholder="•">
+                </div>
+                <p class="otp-msg" id="otpMsg">Resend in 00:59s</p>
+                <div class="bottom">
+                    <button class="btn" id="verifyBtn">Continue</button>
+                    <p class="auth-foot"><button class="link-btn" id="resendBtn">Resend code</button></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="backend.js"></script>
+    <script src="common.js"></script>
+    <script src="verify.js"></script>
+</body>
+</html>
