@@ -28,8 +28,8 @@
                 <div class="form-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg> Event Information</div>
                 <div class="field"><label class="label" for="mName">Event Name</label><input class="input" id="mName" type="text" placeholder="Tech & Creators Summit 2026"></div>
                 <div class="two-col">
-                    <div class="field"><label class="label" for="mDate">Date</label><input class="input" id="mDate" type="text" placeholder="17th Oct, 2026"></div>
-                    <div class="field"><label class="label" for="mTime">Time</label><input class="input" id="mTime" type="text" placeholder="10:00AM"></div>
+                    <div class="field"><label class="label" for="mDate">Date</label><input class="input" id="mDate" type="date"></div>
+                    <div class="field"><label class="label" for="mTime">Time</label><input class="input" id="mTime" type="time"></div>
                 </div>
                 <div class="field"><label class="label" for="mLocation">Event Location</label><input class="input" id="mLocation" type="text" placeholder="Eko Conventional Center, V.I, Lagos"></div>
                 <div class="field"><label class="label" for="mAbout">About Event</label><input class="input" id="mAbout" type="text" placeholder="Tell us about your event"></div>
@@ -53,6 +53,7 @@
                     <p>Upload Ticket Code here</p>
                     <small>Supported CSV, TXT or XLS</small>
                 </div>
+                <button class="btn btn-outline" type="button" onclick="downloadTicketCsvExample()">Download CSV</button>
                 <button class="btn btn-outline codesBtn" type="button">Choose file</button>
                 <p class="file-msg codesMsg"></p>
                 <div style="margin-top:30px"><button class="btn createBtn" type="button" id="mCreate">Create Event</button></div>
@@ -90,6 +91,7 @@
                         <small class="imageMsg">JPG, PNG (Max 5MB)</small>
                     </button>
                 </div>
+                    <div class="field"><label class="label">Ticket Codes CSV</label><button class="btn btn-outline" type="button" onclick="downloadTicketCsvExample()">Download CSV</button><button class="btn btn-outline codesBtn" type="button" style="margin-top:10px">Choose file</button><p class="file-msg codesMsg"></p></div>
                     <div class="field"><label class="label" for="dStaff">Assign Staff</label>
                         <select class="input" id="dStaff"><option value="">Select Staff members</option></select>
                     </div>

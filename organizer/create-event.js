@@ -107,14 +107,30 @@ codesFile.addEventListener("change", function () {
 });
 
 var createButtons = document.querySelectorAll(".createBtn");
+function getVisibleFieldValue(ids) {
+    for (var i = 0; i < ids.length; i++) {
+        var field = document.getElementById(ids[i]);
+        if (field && field.getClientRects().length && field.offsetParent !== null) {
+            return String(field.value || "").trim();
+        }
+    }
+    for (var j = 0; j < ids.length; j++) {
+        var fallback = document.getElementById(ids[j]);
+        if (fallback && String(fallback.value || "").trim()) {
+            return String(fallback.value).trim();
+        }
+    }
+    return "";
+}
+
 async function createEventWithBackend() {
     var token = localStorage.getItem("authToken");
     var organizerId = localStorage.getItem("authUserId");
-    var name = (document.getElementById("dEventTitle").value || document.getElementById("mName").value).trim();
-    var date = document.getElementById("mDate").value.trim();
-    var startAt = document.getElementById("mTime").value.trim();
-    var venue = (document.getElementById("dVenue").value || document.getElementById("mLocation").value).trim();
-    var description = (document.getElementById("dDescription").value || document.getElementById("mAbout").value).trim();
+    var name = getVisibleFieldValue(["mName", "dEventTitle"]);
+    var date = getVisibleFieldValue(["mDate", "dStart"]);
+    var startAt = getVisibleFieldValue(["mTime", "dStartTime"]);
+    var venue = getVisibleFieldValue(["mLocation", "dVenue"]);
+    var description = getVisibleFieldValue(["mAbout", "dDescription"]);
     var imageFile = document.getElementById("imageFile");
     var codesFile = document.getElementById("codesFile");
     if (!token || !organizerId) {
@@ -206,6 +222,21 @@ if (editId != 0) {
     document.getElementById("mCreate").innerHTML = "Done";
     document.getElementById("dCreate").innerHTML = "Done";
     document.getElementById("dEventTitle").value = ev.name;
+    document.getElementById("dStart").value = ev.dateInput || "";
+    document.getElementById("dStartTime").value = ev.timeInput || "";
     document.getElementById("dVenue").value = ev.location;
     document.getElementById("dDescription").value = ev.about;
+}
+
+function downloadTicketCsvExample() {
+    var content = "ticket_code,ticket_type\nREG-1234567,REG\nVIP-2345678,VIP\nVVIP-3456789,VVIP\n";
+    var blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "eventify-ticket-codes-example.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
