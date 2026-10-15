@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify recovery code - Eventify</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="verify-reset-code">
+<div class="auth"><div class="auth-side only-desktop"><div class="brand"><div class="logo-mark"><img src="assets/logo.png" alt=""></div></div><div><h2>Smarter Events.</h2><p>Securely recover your account.</p></div></div>
+<div class="auth-main"><div class="auth-box"><div class="auth-top"><a class="back" href="forgot-password.html" aria-label="Back"></a></div>
+<h1 class="title">Verify recovery code</h1><p class="sub">Enter the six-digit code sent to your email address.</p>
+<div class="otp-row" id="resetOtpRow"><input type="text" maxlength="1" inputmode="numeric" placeholder="•"><input type="text" maxlength="1" inputmode="numeric" placeholder="•"><input type="text" maxlength="1" inputmode="numeric" placeholder="•"><span class="dash"></span><input type="text" maxlength="1" inputmode="numeric" placeholder="•"><input type="text" maxlength="1" inputmode="numeric" placeholder="•"><input type="text" maxlength="1" inputmode="numeric" placeholder="•"></div>
+<p class="otp-msg" id="resetOtpMsg" aria-live="polite"></p><div class="bottom"><button class="btn" id="verifyResetBtn">Continue</button><p class="auth-foot"><button class="link-btn" id="resendResetBtn">Resend code</button></p></div>
+</div></div></div>
+<script src="backend.js"></script><script src="common.js"></script><script src="verify-reset-code.js"></script>
+</body></html>

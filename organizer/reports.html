@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Eventify Organizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="reports" data-protected="yes">
+    <div id="navArea"></div>
+    <div class="main">
+        <div class="only-mobile">
+            <h1 class="title" style="font-size:22px;margin-bottom:24px">Reports</h1>
+            <div class="date-field"><span id="mDate"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+ 
+
+            <div class="stat-soft-row">
+                <div class="stat-soft">Total Attendance<b id="mTotal"></b></div>
+                <div class="stat-soft">Checked-in<b id="mChecked"></b></div>
+            </div>
+            <h2 class="section-title" style="font-size:18px;margin-bottom:16px">Attendance by Ticket type</h2>
+            <div class="bars-panel" id="mBars"></div>
+        </div>
+
+        <div class="only-desktop">
+            <div class="page-head">
+                <div><h1>Attendees Report</h1><p>Overview of attendance across your events.</p></div>
+                <div class="head-actions"><div class="date-chip"><span id="dRange"></span></div><button class="btn exportBtn" type="button">Export Report</button></div>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-card"><div><p class="label-sm">Total Attendees</p><p class="value" id="rTotal"></p></div></div>
+                <div class="stat-card"><div><p class="label-sm">Checked in</p><p class="value" id="rChecked"></p></div></div>
+                <div class="stat-card"><div><p class="label-sm">No Show</p><p class="value" id="rNoShow"></p></div></div>
+                <div class="stat-card"><div><p class="label-sm">Attendance Rate</p><p class="value" id="rRate"></p></div></div>
+            </div>
+            <div class="dash-grid" style="grid-template-columns:1fr 1fr">
+                <div class="panel desk-bars"><h2>Event Breakdown</h2><div id="dEventBars"></div></div>
+                <div class="panel desk-bars"><h2>Attendance by Ticket type</h2><div id="dTypeBars"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="backend.js"></script>
+    <script src="common.js"></script>
+    <script src="reports.js"></script>
+</body>
+</html>
