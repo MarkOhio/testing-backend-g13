@@ -164,24 +164,51 @@ backButton.addEventListener('click', () => {
 });
 
 document.getElementById('downloadButton').addEventListener('click', async () => {
+    const image = document.querySelector('#qrCode img');
     const svg = document.querySelector('#qrCode svg');
+    if (image && image.src) {
+        const link = document.createElement('a');
+        link.href = image.src;
+        link.download = 'eventify-ticket-qr.png';
+        link.click();
+        return;
+    }
     if (!svg) return;
     const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'attendee-ticket.svg';
+    link.download = 'eventify-demo-ticket-qr.svg';
     link.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 
-function fillTicket() {
-    const eventTitle = attendee ? attendee.eventTitle : (selectedEvent ? selectedEvent.title : 'Tech & Creators Summit 2026');
+async function fillTicket() {
+    if (attendee && attendee.attendeeId && attendee.eventId && typeof mockApi.getAttendeeTicket === 'function') {
+        const liveTicket = await mockApi.getAttendeeTicket(attendee.attendeeId, attendee.eventId);
+        if (liveTicket) {
+            attendee = { ...attendee, ...liveTicket };
+            localStorage.setItem('attendeeDetails', JSON.stringify(attendee));
+        }
+    }
     const eventId = attendee ? attendee.eventId : (selectedEvent ? selectedEvent.id : '');
     const event = mockApi.events.find(item => String(item.id) === String(eventId));
+    const eventTitle = attendee && attendee.eventTitle || (event && event.title) || (selectedEvent && selectedEvent.title) || 'Eventify Ticket';
     document.getElementById('qrEventTitle').textContent = eventTitle;
-    document.getElementById('qrEventMeta').textContent = event ? `${event.date} · ${event.time} · ${event.location}` : '';
-    document.getElementById('qrCode').innerHTML = makeQrPattern(attendee ? attendee.code : 'CSV-456');
+    document.getElementById('qrEventMeta').textContent = event ? `${event.date} · ${event.time} · ${event.location}` : (attendee && attendee.eventAddress || '');
+    const qrBox = document.getElementById('qrCode');
+    const qrImage = attendee && attendee.qrCode;
+    if (typeof qrImage === 'string' && (/^data:image\/(png|jpeg|jpg|webp);base64,/i.test(qrImage) || /^https?:\/\//i.test(qrImage))) {
+        const image = document.createElement('img');
+        image.src = qrImage;
+        image.alt = 'Ticket QR code';
+        image.style.width = '100%';
+        image.style.height = '100%';
+        image.style.objectFit = 'contain';
+        qrBox.replaceChildren(image);
+    } else {
+        qrBox.innerHTML = makeQrPattern(attendee && attendee.code || 'DEMO-TICKET');
+    }
 }
 
 function makeQrPattern(value) {

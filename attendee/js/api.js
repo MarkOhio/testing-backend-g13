@@ -82,7 +82,9 @@ const mockApi = {
             eventId: data.event && data.event.id || details.eventId,
             eventTitle: data.event && data.event.name || details.eventTitle,
             code: data.ticket && data.ticket.code || "",
-            status: "Valid"
+            ticketId: data.ticket && (data.ticket.id || data.ticket._id) || data.ticketId || "",
+            ticketType: data.ticket && (data.ticket.ticket_type || data.ticket.ticketType) || details.ticketType,
+            status: data.ticket && data.ticket.status || "unused"
         };
         localStorage.setItem("attendeeDetails", JSON.stringify(saved));
         localStorage.setItem("pendingTicket", "true");
@@ -104,13 +106,45 @@ const mockApi = {
                 eventId: data.event && data.event.id || attendee.eventId,
                 eventTitle: data.event && data.event.name || attendee.eventTitle,
                 eventAddress: data.event && data.event.venue || attendee.eventAddress,
-                ticketId: data.ticketId || attendee.ticketId,
+                ticketId: data.ticketId || (data.ticket && (data.ticket.id || data.ticket._id)) || attendee.ticketId,
+                code: data.ticket && data.ticket.code || attendee.code,
+                ticketType: data.ticket && (data.ticket.ticketType || data.ticket.ticket_type) || attendee.ticketType,
+                status: data.ticket && data.ticket.status || attendee.status || "unused",
+                qrCode: data.ticket && data.ticket.qrCode || attendee.qrCode,
                 verified: true
             };
             localStorage.setItem("attendeeDetails", JSON.stringify(updated));
             return { valid: true, attendee: updated, message: result.message };
         } catch (error) {
             return { valid: false, message: error.message };
+        }
+    },
+    getAttendeeTicket: async function (attendeeId, eventId) {
+        if (!attendeeId || !eventId) return null;
+        try {
+            const result = await attendeeRequest(`/attendees/${encodeURIComponent(attendeeId)}/events/${encodeURIComponent(eventId)}/ticket`);
+            const data = result.data || {};
+            const ticket = data.ticket || {};
+            const qrCode = ticket.qrCode || ticket.qrImage || ticket.qrDataUrl || "";
+            const updated = {
+                ...(JSON.parse(localStorage.getItem("attendeeDetails") || "null") || {}),
+                attendeeId: data.attendee && (data.attendee.id || data.attendee._id) || attendeeId,
+                firstName: data.attendee && data.attendee.firstName || "",
+                lastName: data.attendee && data.attendee.lastName || "",
+                email: data.attendee && data.attendee.email || "",
+                eventId: data.event && (data.event.id || data.event._id) || eventId,
+                eventTitle: data.event && data.event.name || "",
+                eventAddress: data.event && data.event.venue || "",
+                code: ticket.code || "",
+                ticketId: ticket.id || ticket._id || "",
+                ticketType: ticket.ticket_type || ticket.ticketType || "Regular",
+                status: ticket.status || "unused",
+                qrCode: qrCode || (JSON.parse(localStorage.getItem("attendeeDetails") || "null") || {}).qrCode || ""
+            };
+            localStorage.setItem("attendeeDetails", JSON.stringify(updated));
+            return updated;
+        } catch (error) {
+            return null;
         }
     },
     resendCode: async function () {
