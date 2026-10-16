@@ -31,29 +31,40 @@ if (document.body.getAttribute("data-protected") == "yes") {
     }
 }
 
+function getStaffProfile() {
+    var user = {};
+    try { user = JSON.parse(localStorage.getItem("authUser") || "{}"); } catch (error) {}
+    var fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim() || user.name || localStorage.getItem("authName");
+    if (!fullName) fullName = backend.staff.fullName;
+    var parts = fullName.trim().split(/\s+/).filter(Boolean);
+    var initials = parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : (parts[0] || backend.staff.initials).slice(0, 2);
+    return { fullName: fullName, firstName: user.firstName || parts[0] || backend.staff.firstName, initials: initials.toUpperCase(), role: user.role || localStorage.getItem("authRole") || backend.staff.role };
+}
+
 function getStaffName() {
-    var saved = localStorage.getItem("staffName");
-    if (saved == null) {
-        return backend.staff.firstName;
-    }
-    return saved;
+    var user = {};
+    try { user = JSON.parse(localStorage.getItem("authUser") || "{}"); } catch (error) {}
+    return user.firstName || localStorage.getItem("authName") || localStorage.getItem("staffName") || backend.staff.firstName;
+}
+
+function escapeStaffText(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+    });
 }
 
 function buildNav() {
     var navArea = document.getElementById("navArea");
-    if (!navArea) {
-        return;
-    }
+    if (!navArea) return;
+    var profile = getStaffProfile();
     var html = '<div class="sidebar"><div class="brand"><div class="logo-mark">' + logoSvg2 + '</div><span class="brand-name">Eventify</span></div>';
     for (var i = 0; i < navItems.length; i++) {
         var n = navItems[i];
         var cls = "side-link";
-        if (n.key == pageName) {
-            cls += " active";
-        }
+        if (n.key == pageName) cls += " active";
         html += '<a class="' + cls + '" href="' + n.href + '"><svg viewBox="0 0 24 24">' + navIcons[n.key] + '</svg>' + n.text + '</a>';
     }
-    html += '<div class="side-user"><div class="avatar-btn">' + backend.staff.initials + '</div><div><p>' + backend.staff.fullName + '</p><small>' + backend.staff.role + '</small></div></div></div>';
+    html += '<div class="side-user"><div class="avatar-btn">' + escapeStaffText(profile.initials) + '</div><div><p>' + escapeStaffText(profile.fullName) + '</p><small>' + escapeStaffText(profile.role) + '</small></div></div></div>';
     navArea.innerHTML = html;
 }
 
@@ -156,29 +167,14 @@ function nowTime() {
 }
 
 function getCheckIns() {
-    var saved = localStorage.getItem("staffCheckIns");
-    var mine = [];
-    if (saved != null) {
-        mine = JSON.parse(saved);
-    }
-    var all = [];
-    for (var i = mine.length - 1; i >= 0; i--) {
-        all.push(mine[i]);
-    }
-    for (var j = 0; j < backend.checkIns.length; j++) {
-        all.push(backend.checkIns[j]);
-    }
-    return all;
+    try { return JSON.parse(localStorage.getItem("staffCheckIns") || "[]"); }
+    catch (error) { return []; }
 }
 
 function saveCheckIn(item) {
-    var saved = localStorage.getItem("staffCheckIns");
-    var mine = [];
-    if (saved != null) {
-        mine = JSON.parse(saved);
-    }
-    mine.push(item);
-    localStorage.setItem("staffCheckIns", JSON.stringify(mine));
+    var mine = getCheckIns();
+    mine.unshift(item);
+    localStorage.setItem("staffCheckIns", JSON.stringify(mine.slice(0, 100)));
 }
 
 function showToast(text) {
@@ -212,7 +208,8 @@ function heroCardHtml(ev, buttons) {
     var h = '<div class="hero-card"><img src="' + ev.image + '" alt="">';
     h += '<div class="date-badge"><b>' + d.getDate() + '</b>' + months[d.getMonth()] + '</div>';
     h += '<div class="card-actions">' + buttons + '</div>';
-    h += '<div class="hero-info"><h3>' + ev.name + '</h3><p>' + pinSvg + ev.shortLocation + '</p></div></div>';
+    h += '<div class="hero-info"><h3>' + escapeStaffText(ev.name) + '</h3><p>' + pinSvg + escapeStaffText(ev.shortLocation) + '</p>';
+    h += '<p class="event-attendance-count">' + Number(ev.guests || 0) + ' Registered Guests · ' + Number(ev.checkedIn || 0) + ' Checked In</p></div></div>';
     return h;
 }
 

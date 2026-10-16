@@ -107,11 +107,67 @@ function showState(name) {
     window.scrollTo(0, 0);
 }
 
+function safeText(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+    });
+}
+
+function getAttendeeName(result) {
+    var attendee = result.attendee || result.guest || {};
+    return attendee.fullName || attendee.name || [attendee.firstName, attendee.lastName].filter(Boolean).join(" ").trim() || result.attendeeName || result.guestName || "Ticket holder";
+}
+
+function getTicketType(result) {
+    var ticket = result.ticket || {};
+    return result.ticketType || result.ticket_type || ticket.ticketType || ticket.ticket_type || ticket.type || "Regular";
+}
+
+function displayTime(value) {
+    if (!value) return nowTime();
+    var date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 function fillCard(prefix, who, type, code, time) {
-    document.getElementById(prefix + "Name").innerHTML = who;
-    document.getElementById(prefix + "Type").innerHTML = type;
-    document.getElementById(prefix + "Code").innerHTML = code;
-    document.getElementById(prefix + "Time").innerHTML = time;
+    document.getElementById(prefix + "Name").textContent = who;
+    document.getElementById(prefix + "Type").textContent = type;
+    document.getElementById(prefix + "Code").textContent = code;
+    document.getElementById(prefix + "Time").textContent = time;
+}
+
+function saveScanToHistory(result, status) {
+    saveCheckIn({
+        eventId: selected ? selected.id : "",
+        time: result.checkedInAt || result.firstCheckedInAt || new Date().toISOString(),
+        name: getAttendeeName(result),
+        code: result.ticketCode || "—",
+        status: status
+    });
+}
+
+function showScanResult(result) {
+    var status = String(result.status || "invalid").toLowerCase();
+    var name = getAttendeeName(result);
+    var type = getTicketType(result);
+    var code = result.ticketCode || "—";
+
+    if (status === "valid") {
+        var time = displayTime(result.checkedInAt);
+        lastScan = { name: name, type: type, code: code, time: time };
+        saveScanToHistory(result, "Confirmed");
+        fillCard("s", name, type, code, time);
+        showState("stateSuccess");
+    } else if (status === "duplicate") {
+        var firstTime = displayTime(result.firstCheckedInAt || "Previously scanned");
+        saveScanToHistory(result, "Duplicate");
+        fillCard("d", name, type, code, firstTime);
+        showState("stateDuplicate");
+    } else {
+        saveScanToHistory(result, "Declined");
+        document.getElementById("cameraText").textContent = result.message || (status === "wrong-event" ? "This ticket belongs to another event." : "This ticket could not be validated.");
+        showState("stateInvalid");
+    }
 }
 
 async function handleCode(raw) {
@@ -136,27 +192,17 @@ async function handleCode(raw) {
             method: "POST",
             body: {
                 qr_token: qrToken,
-                event_id: String(selected.id),
-                gate_label: selected.gate || "Main Gate"
+                event_id: String(selected.id)
             }
         });
-        var status = result.status || "invalid";
-        var code = result.ticketCode || "—";
-        var time = result.checkedInAt ? new Date(result.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : nowTime();
-        if (status === "valid") {
-            lastScan = { name: "Ticket holder", type: "Valid ticket", code: code, time: time };
-            fillCard("s", "Ticket holder", "Valid ticket", code, time);
-            showState("stateSuccess");
-        } else if (status === "duplicate") {
-            fillCard("d", "Ticket holder", "Already checked in", code, result.firstCheckedInAt ? new Date(result.firstCheckedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Previously scanned");
-            showState("stateDuplicate");
+        showScanResult(result);
+    } catch (error) {
+        if (error.data && error.data.status) {
+            showScanResult(error.data);
         } else {
-            document.getElementById("cameraText").textContent = result.message || "This ticket could not be validated.";
+            document.getElementById("cameraText").textContent = error.message;
             showState("stateInvalid");
         }
-    } catch (error) {
-        document.getElementById("cameraText").textContent = error.message;
-        showState("stateInvalid");
     }
 }
 function showOffline() {

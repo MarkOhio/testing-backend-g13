@@ -25,7 +25,9 @@ document.getElementById("loginForm").addEventListener("submit", async function (
         }
         saveAuthSession(result);
         localStorage.setItem("staffLoggedIn", "yes");
-        localStorage.setItem("staffName", (result.user && result.user.name) || email.split("@")[0]);
+        var user = result.user || {};
+        var fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim() || user.name;
+        localStorage.setItem("staffName", fullName || email.split("@")[0]);
         err.textContent = "";
         window.location.href = "dashboard.html";
     } catch (error) {

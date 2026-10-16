@@ -1,37 +1,62 @@
-var selected = getSelectedEvent();
+var selected = null;
 var filter = "All";
-
-if (selected) {
-    document.getElementById("histEvent").innerHTML = selected.name;
-}
+var historyList = [];
 
 function pillClass(state) {
-    if (state == "Confirmed") {
-        return "pill pill-ok";
-    }
-    if (state == "Duplicate") {
-        return "pill pill-warn";
-    }
+    if (state === "Confirmed") return "pill pill-ok";
+    if (state === "Duplicate") return "pill pill-warn";
     return "pill pill-bad";
 }
 
+function escapeHistoryText(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+    });
+}
+
+function normalizeHistoryScan(scan) {
+    var attendee = scan.attendee || scan.guest || {};
+    var name = attendee.fullName || attendee.name || [attendee.firstName, attendee.lastName].filter(Boolean).join(" ").trim() || scan.attendeeName || scan.guestName;
+    var result = String(scan.result || scan.status || scan.scan_result || "").toLowerCase();
+    var status = result === "valid" || result === "confirmed" ? "Confirmed" : result === "duplicate" ? "Duplicate" : "Declined";
+    var rawTime = scan.time || scan.checkedInAt || scan.createdAt || scan.firstCheckedInAt;
+    var parsedTime = rawTime ? new Date(rawTime) : null;
+    var time = parsedTime && !Number.isNaN(parsedTime.getTime()) ? parsedTime.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : (rawTime || "—");
+    return {
+        eventId: scan.eventId || scan.event_id || (selected && selected.id),
+        time: time,
+        name: name || "Ticket holder",
+        code: scan.ticketCode || scan.code || scan.code_string || "—",
+        status: status
+    };
+}
+
+function demoHistory() {
+    return backend.checkIns.map(function (scan) {
+        return {
+            eventId: selected ? selected.id : scan.eventId,
+            time: scan.time,
+            name: scan.name,
+            code: scan.code,
+            status: scan.status,
+            gate: scan.gate
+        };
+    });
+}
+
 function render() {
-    var list = getCheckIns();
+    var list = historyList.filter(function (item) {
+        return (!selected || String(item.eventId) === String(selected.id)) && (filter === "All" || item.status === filter);
+    });
     var mobile = "";
     var rows = "";
-    for (var i = 0; i < list.length; i++) {
-        var c = list[i];
-        if (selected && c.eventId != selected.id) {
-            continue;
-        }
-        if (filter != "All" && c.status != filter) {
-            continue;
-        }
-        mobile += '<div class="ci-row"><div class="avatar">' + userSvg + '</div><div class="who"><b>' + c.name + '</b><small>' + c.time + '</small></div><span class="' + pillClass(c.status) + '">' + c.status + '</span></div>';
-        rows += "<tr><td>" + c.time + "</td><td>" + c.name + "</td><td>" + c.code + "</td><td><span class='" + pillClass(c.status) + "'>" + c.status + "</span></td><td>" + c.gate + "</td></tr>";
-    }
-    if (mobile == "") {
+    list.forEach(function (item) {
+        mobile += '<div class="ci-row"><div class="avatar">' + userSvg + '</div><div class="who"><b>' + escapeHistoryText(item.name) + '</b><small>' + escapeHistoryText(item.time) + ' · ' + escapeHistoryText(item.code) + '</small></div><span class="' + pillClass(item.status) + '">' + escapeHistoryText(item.status) + '</span></div>';
+        rows += '<tr><td>' + escapeHistoryText(item.time) + '</td><td>' + escapeHistoryText(item.name) + '</td><td>' + escapeHistoryText(item.code) + '</td><td><span class="' + pillClass(item.status) + '">' + escapeHistoryText(item.status) + '</span></td></tr>';
+    });
+    if (!list.length) {
         mobile = '<div class="empty-box">No check-ins found.</div>';
+        rows = '<tr><td colspan="4">No check-ins found.</td></tr>';
     }
     document.getElementById("mHistory").innerHTML = mobile;
     document.getElementById("hBody").innerHTML = rows;
@@ -44,16 +69,42 @@ function setFilter(value) {
     render();
 }
 
-document.getElementById("statusFilter").addEventListener("change", function () {
-    setFilter(this.value);
-});
+document.getElementById("statusFilter").addEventListener("change", function () { setFilter(this.value); });
+document.getElementById("deskFilter").addEventListener("change", function () { setFilter(this.value); });
+document.getElementById("allChip").addEventListener("click", function () { setFilter("All"); });
 
-document.getElementById("deskFilter").addEventListener("change", function () {
-    setFilter(this.value);
-});
+async function loadCheckInHistory() {
+    try {
+        await fetchStaffEvents();
+        selected = getSelectedEvent();
+        if (selected) document.getElementById("histEvent").textContent = selected.name;
+        if (!selected) {
+            historyList = [];
+            render();
+            return;
+        }
 
-document.getElementById("allChip").addEventListener("click", function () {
-    setFilter("All");
-});
+        try {
+            var result = await apiRequest("/scans/events/" + encodeURIComponent(selected.id) + "/staff-attendance");
+            var data = result.data || result;
+            var scans = Array.isArray(data.recentScans) ? data.recentScans : [];
+            historyList = scans.map(normalizeHistoryScan);
+        } catch (error) {
+            var local = getCheckIns().filter(function (item) { return String(item.eventId) === String(selected.id); });
+            if (local.length) {
+                historyList = local.map(normalizeHistoryScan);
+            } else {
+                historyList = demoHistory().map(normalizeHistoryScan);
+            }
+        }
+        render();
+    } catch (error) {
+        selected = getSelectedEvent();
+        if (selected) document.getElementById("histEvent").textContent = selected.name;
+        var localFallback = getCheckIns();
+        historyList = localFallback.length ? localFallback.map(normalizeHistoryScan) : demoHistory().map(normalizeHistoryScan);
+        render();
+    }
+}
 
-render();
+loadCheckInHistory();
