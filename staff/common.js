@@ -76,32 +76,12 @@ function addToList(key, id) {
 }
 
 function getAcceptedEvents() {
-    var accepted = readList("staffAccepted");
-    var removed = readList("staffRemoved");
-    var result = [];
-    for (var i = 0; i < backend.events.length; i++) {
-        var ev = backend.events[i];
-        if (removed.indexOf(ev.id) != -1) {
-            continue;
-        }
-        if (ev.status == "accepted" || accepted.indexOf(ev.id) != -1) {
-            result.push(ev);
-        }
-    }
-    return result;
+    return backend.events.filter(function (event) { return event.staffAssigned === true; });
 }
 
 function getInvitations() {
-    var accepted = readList("staffAccepted");
-    var removed = readList("staffRemoved");
-    var result = [];
-    for (var i = 0; i < backend.events.length; i++) {
-        var ev = backend.events[i];
-        if (ev.status == "invited" && accepted.indexOf(ev.id) == -1 && removed.indexOf(ev.id) == -1) {
-            result.push(ev);
-        }
-    }
-    return result;
+    // The backend currently has no persistent invitation/notification endpoint.
+    return [];
 }
 
 function isLive(ev) {

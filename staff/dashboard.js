@@ -9,11 +9,7 @@ document.getElementById("dToday").innerHTML = "Today, " + today.getDate() + " " 
 document.getElementById("dDate").innerHTML = calSvg + today.getDate() + " " + months[today.getMonth()] + ", " + today.getFullYear();
 
 function exitEvent(id) {
-    if (confirm("Exit this event? It will be removed from your dashboard.")) {
-        addToList("staffRemoved", id);
-        showToast("You have left the event.");
-        render();
-    }
+    showToast("Event removal is not supported by the backend. Contact the organizer to change an assignment.");
 }
 
 function render() {
@@ -54,7 +50,7 @@ function render() {
     }
 
     if (events.length == 0) {
-        mobile = '<div class="empty-box">No events yet. Accept an invitation from the bell icon.</div>';
+        mobile = '<div class="empty-box">No events are currently assigned to your account.</div>';
         desk = mobile;
     }
 
