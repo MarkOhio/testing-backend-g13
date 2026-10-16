@@ -270,6 +270,7 @@ function mapApiEvent(ev) {
         city: ev.venue || "",
         status: ev.status || "upcoming",
         about: ev.description || "",
+        staff: Array.isArray(ev.staff) ? ev.staff : [],
         totalTickets: 0,
         checkedIn: 0,
         remaining: 0,

@@ -5,6 +5,19 @@
         return;
     }
 var ev = getEventById(getIdFromUrl());
+var assignedStaff = [];
+try {
+    var staffResponse = await apiRequest("/auth/staffs");
+    var allStaff = Array.isArray(staffResponse) ? staffResponse : (Array.isArray(staffResponse.data) ? staffResponse.data : []);
+    var assignedIds = Array.isArray(ev.staff) ? ev.staff.map(function (entry) {
+        return String(entry && (entry._id || entry.id) || entry);
+    }) : [];
+    assignedStaff = allStaff.filter(function (person) {
+        return assignedIds.indexOf(String(person._id || person.id || "")) !== -1;
+    });
+} catch (staffError) {
+    document.getElementById("dStaff").textContent = "Could not load assigned staff: " + staffError.message;
+}
 
 document.getElementById("bannerImg").src = ev.image;
 document.getElementById("dName").innerHTML = ev.name;
@@ -20,13 +33,22 @@ document.getElementById("sCategory").innerHTML = ev.category;
 document.getElementById("sCapacity").innerHTML = ev.capacity;
 document.getElementById("editLinkD").href = "create-event.html?edit=" + ev.id;
 document.getElementById("editLinkM").href = "create-event.html?edit=" + ev.id;
+var attendanceLink = document.getElementById("attendanceLink");
+if (attendanceLink) attendanceLink.href = "attendance.html?id=" + encodeURIComponent(ev.id);
 
 var staffHtml = "";
-for (var s = 0; s < backend.staff.length; s++) {
-    var p = backend.staff[s];
-    staffHtml += '<div class="staff-card"><div class="staff-left"><div class="avatar">' + userSvg + '</div><div><p class="staff-name">' + p.name + '</p><p class="staff-sub">' + p.role + '</p></div></div><span class="active-pill">' + p.status + '</span></div>';
+function staffText(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+    });
 }
-document.getElementById("dStaff").innerHTML = staffHtml;
+for (var s = 0; s < assignedStaff.length; s++) {
+    var p = assignedStaff[s];
+    var name = [p.firstName, p.lastName].filter(Boolean).join(" ") || p.name || p.email || "Staff member";
+    staffHtml += '<div class="staff-card"><div class="staff-left"><div class="avatar">' + userSvg + '</div><div><p class="staff-name">' + staffText(name) + '</p><p class="staff-sub">' + staffText(p.email || "") + '</p></div></div><span class="active-pill">Assigned</span></div>';
+}
+if (!staffHtml) staffHtml = '<p class="sub">No staff are assigned to this event.</p>';
+if (document.getElementById("dStaff").textContent.indexOf("Could not load assigned staff:") !== 0) document.getElementById("dStaff").innerHTML = staffHtml;
 
 var tabs = document.querySelectorAll("#detailTabs button");
 for (var t = 0; t < tabs.length; t++) {
